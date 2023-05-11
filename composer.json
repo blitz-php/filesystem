@@ -1,0 +1,59 @@
+{
+    "name": "blitz-php/filesystem",
+    "type": "library",
+    "description": "Autoloader pour Blitz PHP",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dimitri Sitchet Tomkeu",
+            "email": "devcode.dst@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "blitz-php/traits": "^1.0",
+        "league/flysystem": "^3.15",
+        "symfony/finder": "^6.0"
+	},
+    "require-dev": {
+        "blitz-php/coding-standard": "^1.1",
+        "phpstan/phpstan": "^1.4.7",
+        "scrutinizer/ocular": "^1.8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "BlitzPHP\\Filesystem\\": "src"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        }
+    },
+    "support": {
+        "issues": "https://github.com/blitz-php/framework/issues",
+        "source": "https://github.com/blitz-php/framework"
+    },
+    "scripts": {
+        "analyze": "phpstan analyse",
+        "cs": "php-cs-fixer fix --ansi --verbose --dry-run --diff",
+        "cs-fix": "php-cs-fixer fix --ansi --verbose --diff"
+    },
+    "suggest": {
+        "ext-ftp": "Requis pour utiliser le pilote FTP Flysystem.",
+        "illuminate/http": "Requis pour gérer les fichiers téléchargés (^7.0).",
+        "league/flysystem-aws-s3-v3": "Requis pour utiliser le pilote Flysystem S3 (^3.0).",
+        "league/flysystem-ftp": "Requis pour utiliser le pilote FTP Flysystem (^3.0).",
+        "league/flysystem-sftp-v3": "Requis pour utiliser le pilote Flysystem SFTP (^3.0).",
+        "psr/http-message": "Requis pour permettre à Storage::put d'accepter une StreamInterface (^1.0).",
+        "symfony/filesystem": "Requis pour activer la prise en charge des liens symboliques relatifs (^6.0).",
+        "symfony/mime": "Requis pour activer la prise en charge des extensions de devinettes (^6.0)."
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
