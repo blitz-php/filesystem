@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "BlitzPHP\\Filesystem\\": "src"
+            "BlitzPHP\\Filesystem\\": ""
         }
     },
     "config": {
