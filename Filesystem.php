@@ -36,7 +36,7 @@ class Filesystem
     }
 
     /**
-     * Determine if a file or directory is missing.
+     * Déterminez si un fichier ou un répertoire est manquant.
      */
     public function missing(string $path): bool
     {
@@ -126,14 +126,14 @@ class Filesystem
     }
 
     /**
-     * Get the contents of a file one line at a time.
+     * Obtenir le contenu d'un fichier une ligne à la fois.
      *
      * @throws FileNotFoundException
      */
     public function lines(string $path): LazyCollection
     {
         if (! $this->isFile($path)) {
-            throw new FileNotFoundException("File does not exist at path {$path}.");
+            throw new FileNotFoundException("Le fichier n'existe pas dans le chemin {$path}.");
         }
 
         return LazyCollection::make(function () use ($path) {
@@ -170,14 +170,14 @@ class Filesystem
      */
     public function replace(string $path, string $content, ?int $mode = null): void
     {
-        // If the path already exists and is a symlink, get the real path...
+        // Si le chemin existe déjà et est un lien symbolique, obtenez le vrai chemin...
         clearstatcache(true, $path);
 
         $path = realpath($path) ?: $path;
 
         $tempPath = tempnam(dirname($path), basename($path));
 
-        // Fix permissions of tempPath because `tempnam()` creates it with permissions set to 0600...
+        // Corrigez les autorisations de tempPath car `tempnam()` le crée avec des autorisations définies sur 0600 ...
         if (null !== $mode) {
             chmod($tempPath, $mode);
         } else {
@@ -190,7 +190,7 @@ class Filesystem
     }
 
     /**
-     * Replace a given string within a given file.
+     * Remplace une chaîne donnée dans un fichier donné.
      */
     public function replaceInFile(array|string $search, array|string $replace, string $path): void
     {
@@ -198,7 +198,7 @@ class Filesystem
     }
 
     /**
-     * Prepend to a file.
+     * Ajouter au début d'un fichier.
      *
      * @return false|int
      */
@@ -212,7 +212,7 @@ class Filesystem
     }
 
     /**
-     * Append to a file.
+     * Ajouter à un fichier.
      *
      * @return false|int
      */
@@ -222,7 +222,7 @@ class Filesystem
     }
 
     /**
-     * Get or set UNIX mode of a file or directory.
+     * Obtenir ou définir le mode UNIX d'un fichier ou d'un répertoire.
      */
     public function chmod(string $path, ?int $mode = null): mixed
     {
@@ -234,7 +234,7 @@ class Filesystem
     }
 
     /**
-     * Delete the file at a given path.
+     * Supprimer le fichier à un chemin donné.
      */
     public function delete(string|array $paths): bool
     {
@@ -258,7 +258,7 @@ class Filesystem
     }
 
     /**
-     * Move a file to a new location.
+     * Déplacer un fichier vers un nouvel emplacement.
      */
     public function move(string $path, string $target, bool $overwrite = true): bool
     {
@@ -270,7 +270,7 @@ class Filesystem
     }
 
     /**
-     * Copy a file to a new location.
+     * Copiez un fichier vers un nouvel emplacement.
      */
     public function copy(string $path, string $target, bool $overwrite = true): bool
     {
@@ -282,7 +282,7 @@ class Filesystem
     }
 
     /**
-     * Create a symlink to the target file or directory. On Windows, a hard link is created if the target is a file.
+     * Créez un lien symbolique vers le fichier ou le répertoire cible. Sous Windows, un lien physique est créé si la cible est un fichier.
      *
      * @return bool|void
      */
@@ -298,7 +298,7 @@ class Filesystem
     }
 
     /**
-     * Extract the file name from a file path.
+     * Extraire le nom de fichier d'un chemin de fichier.
      */
     public function name(string $path): string
     {
@@ -306,7 +306,7 @@ class Filesystem
     }
 
     /**
-     * Extract the trailing name component from a file path.
+     * Extraire le composant de nom de fin d'un chemin de fichier.
      */
     public function basename(string $path): string
     {
@@ -314,7 +314,7 @@ class Filesystem
     }
 
     /**
-     * Extract the parent directory from a file path.
+     * Extraire le répertoire parent d'un chemin de fichier.
      */
     public function dirname(string $path): string
     {
@@ -322,7 +322,7 @@ class Filesystem
     }
 
     /**
-     * Extract the file extension from a file path.
+     * Extraire l'extension de fichier d'un chemin de fichier.
      */
     public function extension(string $path): string
     {
@@ -330,7 +330,7 @@ class Filesystem
     }
 
     /**
-     * Get the file type of a given file.
+     * Obtenir le type de fichier d'un fichier donné.
      */
     public function type(string $path): string
     {
@@ -338,7 +338,7 @@ class Filesystem
     }
 
     /**
-     * Get the mime-type of a given file.
+     * Récupère le type mime d'un fichier donné.
      *
      * @return false|string
      */
@@ -348,7 +348,7 @@ class Filesystem
     }
 
     /**
-     * Get the file size of a given file.
+     * Obtenir la taille de fichier d'un fichier donné.
      */
     public function size(string $path): int
     {
@@ -356,7 +356,7 @@ class Filesystem
     }
 
     /**
-     * Get the file's last modification time.
+     * Obtenir l'heure de la dernière modification du fichier.
      */
     public function lastModified(string $path): int
     {
@@ -364,7 +364,7 @@ class Filesystem
     }
 
     /**
-     * Determine if the given path is a directory.
+     * Déterminer si le chemin donné est un répertoire.
      */
     public function isDirectory(string $directory): bool
     {
@@ -372,7 +372,7 @@ class Filesystem
     }
 
     /**
-     * Determine if the given path is a directory that does not contain any other files or directories.
+     * Déterminer si le chemin donné est un répertoire qui ne contient aucun autre fichier ou répertoire.
      */
     public function isEmptyDirectory(string $directory, bool $ignoreDotFiles = false): bool
     {
@@ -380,7 +380,7 @@ class Filesystem
     }
 
     /**
-     * Determine if the given path is readable.
+     * Déterminez si le chemin donné est lisible.
      */
     public function isReadable(string $path): bool
     {
@@ -388,7 +388,7 @@ class Filesystem
     }
 
     /**
-     * Determine if the given path is writable.
+     * Détermine si le chemin donné est accessible en écriture.
      */
     public function isWritable(string $path): bool
     {
@@ -396,7 +396,7 @@ class Filesystem
     }
 
     /**
-     * Determine if two files are the same by comparing their hashes.
+     * Déterminez si deux fichiers sont identiques en comparant leurs hachages.
      */
     public function hasSameHash(string $firstFile, string $secondFile): bool
     {
@@ -406,7 +406,7 @@ class Filesystem
     }
 
     /**
-     * Determine if the given path is a file.
+     * Déterminez si le chemin donné est un fichier.
      */
     public function isFile(string $file): bool
     {
@@ -414,7 +414,7 @@ class Filesystem
     }
 
     /**
-     * Find path names matching a given pattern.
+     * Trouver les noms de chemin correspondant à un modèle donné.
      *
      * @return array
      */
@@ -424,7 +424,7 @@ class Filesystem
     }
 
     /**
-     * Get an array of all files in a directory.
+     * Récupère un tableau de tous les fichiers d'un répertoire.
      *
      * @return \Symfony\Component\Finder\SplFileInfo[]
      */
@@ -461,7 +461,7 @@ class Filesystem
     }
 
     /**
-     * Get all of the files from the given directory (recursive).
+     * Récupère tous les fichiers du répertoire donné (récursif).
      *
      * @return \Symfony\Component\Finder\SplFileInfo[]
      */
@@ -498,7 +498,7 @@ class Filesystem
     }
 
     /**
-     * Get all of the directories within a given directory.
+     * Récupère tous les répertoires d'un répertoire donné.
      */
     public function directories(string $directory, int $depth = 0, bool $hidden = false): array
     {
@@ -512,7 +512,7 @@ class Filesystem
     }
 
     /**
-     * Ensure a directory exists.
+     * Assurez-vous qu'un répertoire existe.
      */
     public function ensureDirectoryExists(string $path, int $mode = 0755, bool $recursive = true): void
     {
@@ -522,7 +522,7 @@ class Filesystem
     }
 
     /**
-     * Create a directory.
+     * Créez un répertoire.
      */
     public function makeDirectory(string $path, int $mode = 0755, bool $recursive = false, bool $force = false): bool
     {
@@ -534,7 +534,7 @@ class Filesystem
     }
 
     /**
-     * Move a directory.
+     * Déplacer un répertoire.
      */
     public function moveDirectory(string $from, string $to, bool $overwrite = false): bool
     {
@@ -546,7 +546,7 @@ class Filesystem
     }
 
     /**
-     * Copy a directory from one location to another.
+     * Copiez un répertoire d'un emplacement à un autre.
      */
     public function copyDirectory(string $directory, string $destination, ?int $options = null): bool
     {
@@ -556,19 +556,19 @@ class Filesystem
 
         $options = $options ?: FilesystemIterator::SKIP_DOTS;
 
-        // If the destination directory does not actually exist, we will go ahead and
-        // create it recursively, which just gets the destination prepared to copy
-        // the files over. Once we make the directory we'll proceed the copying.
+        // Si le répertoire de destination n'existe pas réellement, 
+        // nous continuerons et le créerons de manière récursive, 
+        // ce qui préparera simplement la destination à copier les fichiers. 
+        // Une fois que nous aurons créé le répertoire, nous procéderons à la copie.
         $this->ensureDirectoryExists($destination, 0777);
 
         $items = new FilesystemIterator($directory, $options);
 
         foreach ($items as $item) {
-            // As we spin through items, we will check to see if the current file is actually
-            // a directory or a file. When it is actually a directory we will need to call
-            // back into this function recursively to keep copying these nested folders.
+            // Au fur et à mesure que nous parcourrons les éléments, nous vérifierons si le fichier actuel est en fait un répertoire ou un fichier.
+            // Lorsqu'il s'agit en fait d'un répertoire, nous devrons rappeler cette fonction de manière récursive pour continuer à copier ces dossiers imbriqués.            
             $target = $destination . '/' . $item->getBasename();
-
+            
             if ($item->isDir()) {
                 $path = $item->getPathname();
 
@@ -577,9 +577,8 @@ class Filesystem
                 }
             }
 
-            // If the current items is just a regular file, we will just copy this to the new
-            // location and keep looping. If for some reason the copy fails we'll bail out
-            // and return false, so the developer is aware that the copy process failed.
+            // Si les éléments actuels ne sont qu'un fichier normal, nous le copierons simplement dans le nouvel emplacement et continuerons à boucler.
+            // Si, pour une raison quelconque, la copie échoue, nous renflouerons et renverrons false, afin que le développeur sache que le processus de copie a échoué.
             elseif (! $this->copy($item->getPathname(), $target)) {
                 return false;
             }
@@ -589,9 +588,9 @@ class Filesystem
     }
 
     /**
-     * Recursively delete a directory.
+     * Supprimer récursivement un répertoire.
      *
-     * The directory itself may be optionally preserved.
+     * Le répertoire lui-même peut éventuellement être conservé.
      */
     public function deleteDirectory(string $directory, bool $preserve = false): bool
     {
@@ -602,16 +601,19 @@ class Filesystem
         $items = new FilesystemIterator($directory);
 
         foreach ($items as $item) {
-            // If the item is a directory, we can just recurse into the function and
-            // delete that sub-directory otherwise we'll just delete the file and
-            // keep iterating through each file until the directory is cleaned.
+            // Si l'élément est un répertoire, nous pouvons simplement revenir dans la fonction 
+            // et supprimer ce sous-répertoire, 
+            // sinon nous supprimerons simplement le fichier 
+            // et continuerons à parcourir chaque fichier jusqu'à ce que le répertoire soit nettoyé.
             if ($item->isDir() && ! $item->isLink()) {
                 $this->deleteDirectory($item->getPathname());
             }
 
-            // If the item is just a file, we can go ahead and delete it since we're
-            // just looping through and waxing all of the files in this directory
-            // and calling directories recursively, so we delete the real path.
+            // Si l'élément n'est qu'un fichier, nous pouvons continuer 
+            // et le supprimer puisque nous ne faisons que parcourir 
+            // et parfaire tous les fichiers de ce répertoire 
+            // et appeler les répertoires de manière récursive, 
+            // nous supprimons donc le chemin réel.
             else {
                 $this->delete($item->getPathname());
             }
@@ -625,7 +627,7 @@ class Filesystem
     }
 
     /**
-     * Remove all of the directories within a given directory.
+     * Supprimez tous les répertoires d'un répertoire donné.
      */
     public function deleteDirectories(string $directory): bool
     {
@@ -643,7 +645,7 @@ class Filesystem
     }
 
     /**
-     * Empty the specified directory of all files and folders.
+     * Vide le répertoire spécifié de tous les fichiers et dossiers.
      */
     public function cleanDirectory(string $directory): bool
     {
