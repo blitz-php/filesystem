@@ -9,9 +9,10 @@
  * the LICENSE file that was distributed with this source code.
  */
 
-namespace BlitzPHP\Filesystem;
+namespace BlitzPHP\Filesystem\Adapters;
 
 use Aws\S3\S3Client;
+use BlitzPHP\Filesystem\FilesystemAdapter;
 use BlitzPHP\Traits\Conditionable;
 use DateTimeInterface;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter as S3Adapter;
@@ -25,9 +26,9 @@ class AwsS3V3Adapter extends FilesystemAdapter
     use Conditionable;
 
     /**
-     * Create a new AwsS3V3FilesystemAdapter instance.
+     * Créez une nouvelle instance AwsS3V3FilesystemAdapter.
      *
-     * @param \Aws\S3\S3Client $client The AWS S3 client.
+     * @param \Aws\S3\S3Client $client Le client AWS S3.
      */
     public function __construct(FilesystemOperator $driver, S3Adapter $adapter, array $config, protected S3Client $client)
     {
@@ -39,9 +40,8 @@ class AwsS3V3Adapter extends FilesystemAdapter
      */
     public function url(string $path): string
     {
-        // If an explicit base URL has been set on the disk configuration then we will use
-        // it as the base URL instead of the default path. This allows the developer to
-        // have full control over the base path for this filesystem's generated URLs.
+        // Si une URL de base explicite a été définie sur la configuration du disque, nous l'utiliserons comme URL de base au lieu du chemin par défaut.
+        // Cela permet au développeur d'avoir un contrôle total sur le chemin de base des URL générées par ce système de fichiers.
         if (isset($this->config['url'])) {
             return $this->concatPathToUrl($this->config['url'], $this->prefixer->prefixPath($path));
         }
@@ -76,9 +76,8 @@ class AwsS3V3Adapter extends FilesystemAdapter
             $options
         )->getUri();
 
-        // If an explicit base URL has been set on the disk configuration then we will use
-        // it as the base URL instead of the default path. This allows the developer to
-        // have full control over the base path for this filesystem's generated URLs.
+        // Si une URL de base explicite a été définie sur la configuration du disque, nous l'utiliserons comme URL de base au lieu du chemin par défaut.
+        // Cela permet au développeur d'avoir un contrôle total sur le chemin de base des URL générées par ce système de fichiers.
         if (isset($this->config['temporary_url'])) {
             $uri = $this->replaceBaseUrl($uri, $this->config['temporary_url']);
         }
@@ -87,7 +86,7 @@ class AwsS3V3Adapter extends FilesystemAdapter
     }
 
     /**
-     * Get the underlying S3 client.
+     * Obtenez le client S3 sous-jacent.
      */
     public function getClient(): S3Client
     {

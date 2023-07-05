@@ -9,10 +9,14 @@
  * the LICENSE file that was distributed with this source code.
  */
 
-namespace BlitzPHP\Filesystem;
+namespace BlitzPHP\Filesystem\Exceptions;
 
-use Exception;
+use RuntimeException;
 
-class FileNotFoundException extends Exception
+class FileNotFoundException extends RuntimeException
 {
+    public static function fileNotFound(string $path)
+    {
+        return new static(lang('Files.fileNotFound', [$path]));
+    }
 }

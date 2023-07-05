@@ -9,9 +9,10 @@
  * the LICENSE file that was distributed with this source code.
  */
 
-namespace BlitzPHP\Filesystem;
+namespace BlitzPHP\Filesystem\Adapters;
 
 use BadMethodCallException;
+use BlitzPHP\Filesystem\FilesystemInterface;
 use BlitzPHP\Traits\Conditionable;
 use BlitzPHP\Traits\Macroable;
 use BlitzPHP\Utilities\Helpers;

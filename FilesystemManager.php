@@ -12,6 +12,8 @@
 namespace BlitzPHP\Filesystem;
 
 use Aws\S3\S3Client;
+use BlitzPHP\Filesystem\Adapters\AwsS3V3Adapter;
+use BlitzPHP\Filesystem\Adapters\FilesystemAdapter;
 use BlitzPHP\Utilities\Helpers;
 use BlitzPHP\Utilities\Iterable\Arr;
 use Closure;

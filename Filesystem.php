@@ -11,6 +11,7 @@
 
 namespace BlitzPHP\Filesystem;
 
+use BlitzPHP\Filesystem\Exceptions\FileNotFoundException;
 use BlitzPHP\Traits\Conditionable;
 use BlitzPHP\Traits\Macroable;
 use BlitzPHP\Utilities\Iterable\LazyCollection;
@@ -54,7 +55,7 @@ class Filesystem
             return $lock ? $this->sharedGet($path) : file_get_contents($path);
         }
 
-        throw new FileNotFoundException("File does not exist at path {$path}.");
+        throw new FileNotFoundException("Le fichier n'existe pas dans le chemin {$path}.");
     }
 
     /**
