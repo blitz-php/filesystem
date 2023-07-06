@@ -147,13 +147,13 @@ class UploadedFile extends GuzzleUploadedFile
             return $this->filesystemManager = Services::storage();
         }
 
-        return $this->filesystemManager = new FilesystemManager([    
-            'default' => 'local',      
-            'disks' => [
+        return $this->filesystemManager = new FilesystemManager([
+            'default' => 'local',
+            'disks'   => [
                 'local' => [
                     'driver' => 'local',
-                    'root' => dirname(__DIR__),
-                    'throw' => false,
+                    'root'   => dirname(__DIR__),
+                    'throw'  => false,
                 ],
             ],
         ]);

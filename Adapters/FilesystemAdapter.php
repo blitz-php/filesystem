@@ -74,9 +74,9 @@ class FilesystemAdapter implements FilesystemInterface
     /**
      * Créez une nouvelle instance d'adaptateur de système de fichiers.
      *
-     * @param FilesystemOperator $driver L'implémentation du système de fichiers Flysystem.
-     * @param FlysystemAdapter $adapter L'implémentation de l'adaptateur Flysystem.
-     * @param array $config La configuration du système de fichiers.
+     * @param FilesystemOperator $driver  L'implémentation du système de fichiers Flysystem.
+     * @param FlysystemAdapter   $adapter L'implémentation de l'adaptateur Flysystem.
+     * @param array              $config  La configuration du système de fichiers.
      */
     public function __construct(protected FilesystemOperator $driver, protected FlysystemAdapter $adapter, protected array $config = [])
     {
@@ -163,7 +163,7 @@ class FilesystemAdapter implements FilesystemInterface
     public function response(string $path, ?string $name = null, array $headers = [], ?string $disposition = 'inline'): Response
     {
         $response = new Response();
-        
+
         if (! array_key_exists('Content-Type', $headers)) {
             $headers['Content-Type'] = $this->mimeType($path);
         }
@@ -721,10 +721,10 @@ class FilesystemAdapter implements FilesystemInterface
     /**
      * Génère une valeur de champ HTTP Content-Disposition.
      *
-     * @param string $disposition Une valeur entre "inline" ou "attachment"
+     * @param string $disposition      Une valeur entre "inline" ou "attachment"
      * @param string $filename         Une chaîne unicode
      * @param string $filenameFallback Une chaîne contenant uniquement des caractères ASCII qui est sémantiquement équivalente à $filename.
-     *                                  Si le nom de fichier est déjà ASCII, il peut être omis ou simplement copié à partir de $filename
+     *                                 Si le nom de fichier est déjà ASCII, il peut être omis ou simplement copié à partir de $filename
      *
      * @throws InvalidArgumentException
      *
@@ -732,8 +732,8 @@ class FilesystemAdapter implements FilesystemInterface
      */
     public static function makeDisposition(string $disposition, string $filename, string $filenameFallback = ''): string
     {
-        if (!\in_array($disposition, ['attachment', 'inline'])) {
-            throw new \InvalidArgumentException('La disposition doit être "attachment" ou "inline".');
+        if (! \in_array($disposition, ['attachment', 'inline'], true)) {
+            throw new InvalidArgumentException('La disposition doit être "attachment" ou "inline".');
         }
 
         if ('' === $filenameFallback) {
@@ -741,7 +741,7 @@ class FilesystemAdapter implements FilesystemInterface
         }
 
         // filenameFallback n'est pas ASCII.
-        if (!preg_match('/^[\x20-\x7e]*$/', $filenameFallback)) {
+        if (! preg_match('/^[\x20-\x7e]*$/', $filenameFallback)) {
             throw new InvalidArgumentException('Le nom de fichier de secours ne doit contenir que des caractères ASCII.');
         }
 
@@ -757,7 +757,7 @@ class FilesystemAdapter implements FilesystemInterface
 
         $params = ['filename' => $filenameFallback];
         if ($filename !== $filenameFallback) {
-            $params['filename*'] = "utf-8''".rawurlencode($filename);
+            $params['filename*'] = "utf-8''" . rawurlencode($filename);
         }
 
         return $disposition . '; ' . Arr::toString($params, ';', true);

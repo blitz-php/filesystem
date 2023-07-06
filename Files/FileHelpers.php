@@ -39,7 +39,7 @@ trait FileHelpers
         return $this->clientExtension();
     }
 
-     /**
+    /**
      * Génère des noms aléatoires basés sur un simple hachage et l'heure,
      * avec l'extension de fichier correcte jointe.
      */
@@ -48,10 +48,10 @@ trait FileHelpers
         if ($path) {
             $path = rtrim($path, '/') . '/';
         }
-        
+
         $hash = $this->hashName ?: $this->hashName = bin2hex(random_bytes(10));
 
-        if (!empty($extension = $this->clientExtension())) {
+        if (! empty($extension = $this->clientExtension())) {
             $extension = '.' . $extension;
         }
 
