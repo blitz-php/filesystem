@@ -11,12 +11,15 @@
 
 namespace BlitzPHP\Filesystem\Exceptions;
 
+use BlitzPHP\Traits\Support\Translatable;
 use RuntimeException;
 
 class FileNotFoundException extends RuntimeException
 {
+    use Translatable;
+
     public static function fileNotFound(string $path)
     {
-        return new static(lang('Files.fileNotFound', [$path]));
+        return new static(static::translate('Files.fileNotFound', [$path]));
     }
 }

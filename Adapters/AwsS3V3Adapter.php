@@ -12,7 +12,6 @@
 namespace BlitzPHP\Filesystem\Adapters;
 
 use Aws\S3\S3Client;
-use BlitzPHP\Filesystem\FilesystemAdapter;
 use BlitzPHP\Traits\Conditionable;
 use DateTimeInterface;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter as S3Adapter;
