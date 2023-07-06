@@ -22,7 +22,7 @@ namespace BlitzPHP\Filesystem\Files;
  * Il en va de même lorsqu'il existe plus d'un type mime pour une même extension.
  *
  * Lorsque vous travaillez avec des types mime, assurez-vous que l'extension "fileinfo" est activée pour détecter de manière fiable les types de média.
- * 
+ *
  * @credit <a href="http://codeigniter.com">CodeIgniter 4 - \Config\Mimes</a>
  */
 class Mimes
@@ -529,7 +529,7 @@ class Mimes
         }
 
         // Vérifiez à l'envers la liste des types MIME si aucune extension n'a été proposée.
-        // Cette recherche est sensible à l'ordre !
+        // Cette recherche est sensible à l'ordre !
         foreach (static::$mimes as $ext => $types) {
             if (in_array($type, (array) $types, true)) {
                 return $ext;

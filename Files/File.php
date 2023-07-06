@@ -19,7 +19,7 @@ use SplFileInfo;
 
 /**
  * Wrapper pour le SplFileInfo intégré de PHP, avec des bonus.
- * 
+ *
  * @credit <a href="http://codeigniter.com">CodeIgniter 4 - \CodeIgniter\Files\FileCollector</a>
  */
 class File extends SplFileInfo
@@ -53,7 +53,7 @@ class File extends SplFileInfo
     /**
      * Récupérez la taille du fichier.
      *
-     * Les implémentations DEVRAIENT renvoyer la valeur stockée dans la clé "size" du fichier dans le tableau 
+     * Les implémentations DEVRAIENT renvoyer la valeur stockée dans la clé "size" du fichier dans le tableau
      * $_FILES si disponible, car PHP calcule cela en fonction de la taille réelle transmise.
      *
      * @return false|int La taille du fichier en octets, ou false en cas d'échec
@@ -71,7 +71,7 @@ class File extends SplFileInfo
      */
     public function getSizeByUnit(string $unit = 'b')
     {
-        return match(strtolower($unit)) {
+        return match (strtolower($unit)) {
             'kb'    => number_format($this->getSize() / 1024, 3),
             'mb'    => number_format(($this->getSize() / 1024) / 1024, 3),
             default => $this->getSize(),

@@ -557,9 +557,9 @@ class Filesystem
 
         $options = $options ?: FilesystemIterator::SKIP_DOTS;
 
-        // Si le répertoire de destination n'existe pas réellement, 
-        // nous continuerons et le créerons de manière récursive, 
-        // ce qui préparera simplement la destination à copier les fichiers. 
+        // Si le répertoire de destination n'existe pas réellement,
+        // nous continuerons et le créerons de manière récursive,
+        // ce qui préparera simplement la destination à copier les fichiers.
         // Une fois que nous aurons créé le répertoire, nous procéderons à la copie.
         $this->ensureDirectoryExists($destination, 0777);
 
@@ -567,9 +567,9 @@ class Filesystem
 
         foreach ($items as $item) {
             // Au fur et à mesure que nous parcourrons les éléments, nous vérifierons si le fichier actuel est en fait un répertoire ou un fichier.
-            // Lorsqu'il s'agit en fait d'un répertoire, nous devrons rappeler cette fonction de manière récursive pour continuer à copier ces dossiers imbriqués.            
+            // Lorsqu'il s'agit en fait d'un répertoire, nous devrons rappeler cette fonction de manière récursive pour continuer à copier ces dossiers imbriqués.
             $target = $destination . '/' . $item->getBasename();
-            
+
             if ($item->isDir()) {
                 $path = $item->getPathname();
 
@@ -602,18 +602,18 @@ class Filesystem
         $items = new FilesystemIterator($directory);
 
         foreach ($items as $item) {
-            // Si l'élément est un répertoire, nous pouvons simplement revenir dans la fonction 
-            // et supprimer ce sous-répertoire, 
-            // sinon nous supprimerons simplement le fichier 
+            // Si l'élément est un répertoire, nous pouvons simplement revenir dans la fonction
+            // et supprimer ce sous-répertoire,
+            // sinon nous supprimerons simplement le fichier
             // et continuerons à parcourir chaque fichier jusqu'à ce que le répertoire soit nettoyé.
             if ($item->isDir() && ! $item->isLink()) {
                 $this->deleteDirectory($item->getPathname());
             }
 
-            // Si l'élément n'est qu'un fichier, nous pouvons continuer 
-            // et le supprimer puisque nous ne faisons que parcourir 
-            // et parfaire tous les fichiers de ce répertoire 
-            // et appeler les répertoires de manière récursive, 
+            // Si l'élément n'est qu'un fichier, nous pouvons continuer
+            // et le supprimer puisque nous ne faisons que parcourir
+            // et parfaire tous les fichiers de ce répertoire
+            // et appeler les répertoires de manière récursive,
             // nous supprimons donc le chemin réel.
             else {
                 $this->delete($item->getPathname());

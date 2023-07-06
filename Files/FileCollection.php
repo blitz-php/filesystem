@@ -21,7 +21,7 @@ use IteratorAggregate;
  * Représentation d'un groupe de fichiers, avec des utilitaires pour les localiser, les filtrer et les classer.
  *
  * @template-implements IteratorAggregate<int, File>
- * 
+ *
  * @credit <a href="http://codeigniter.com">CodeIgniter 4 - \CodeIgniter\Files\FileCollector</a>
  */
 class FileCollection implements Countable, IteratorAggregate
@@ -275,8 +275,8 @@ class FileCollection implements Countable, IteratorAggregate
     /**
      * Supprime tous les fichiers de la liste qui correspondent au modèle fourni (dans la portée facultative).
      *
-     * @param string $pattern Regex ou chaîne pseudo-regex
-     * @param string|null $scope Le répertoire pour limiter la portée
+     * @param string      $pattern Regex ou chaîne pseudo-regex
+     * @param string|null $scope   Le répertoire pour limiter la portée
      */
     public function removePattern(string $pattern, ?string $scope = null): self
     {
@@ -294,8 +294,8 @@ class FileCollection implements Countable, IteratorAggregate
     /**
      * Conserve uniquement les fichiers de la liste qui correspondent (dans la portée facultative).
      *
-     * @param string $pattern Regex ou chaîne pseudo-regex
-     * @param string|null $scope Un répertoire pour limiter la portée
+     * @param string      $pattern Regex ou chaîne pseudo-regex
+     * @param string|null $scope   Un répertoire pour limiter la portée
      */
     public function retainPattern(string $pattern, ?string $scope = null): self
     {
