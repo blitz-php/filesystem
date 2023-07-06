@@ -1,7 +1,7 @@
 {
     "name": "blitz-php/filesystem",
     "type": "library",
-    "description": "Autoloader pour Blitz PHP",
+    "description": "Systeme de fichier pour Blitz PHP",
     "license": "MIT",
     "authors": [
         {
@@ -47,7 +47,7 @@
     },
     "suggest": {
         "ext-ftp": "Requis pour utiliser le pilote FTP Flysystem.",
-        "illuminate/http": "Requis pour gérer les fichiers téléchargés (^7.0).",
+        "guzzlehttp/psr7": "Requis pour gérer les fichiers téléchargés (^2.5).",
         "league/flysystem-aws-s3-v3": "Requis pour utiliser le pilote Flysystem S3 (^3.0).",
         "league/flysystem-ftp": "Requis pour utiliser le pilote FTP Flysystem (^3.0).",
         "league/flysystem-sftp-v3": "Requis pour utiliser le pilote Flysystem SFTP (^3.0).",

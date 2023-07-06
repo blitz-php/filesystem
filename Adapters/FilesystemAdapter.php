@@ -12,14 +12,18 @@
 namespace BlitzPHP\Filesystem\Adapters;
 
 use BadMethodCallException;
+use BlitzPHP\Filesystem\Files\File;
+use BlitzPHP\Filesystem\Files\UploadedFile;
 use BlitzPHP\Filesystem\FilesystemInterface;
 use BlitzPHP\Traits\Conditionable;
 use BlitzPHP\Traits\Macroable;
 use BlitzPHP\Utilities\Helpers;
+use BlitzPHP\Utilities\Iterable\Arr;
 use BlitzPHP\Utilities\String\Text;
 use Closure;
 use DateTimeInterface;
-use GuzzleHttp\Psr7\UploadedFile;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Utils;
 use InvalidArgumentException;
 use League\Flysystem\FilesystemAdapter as FlysystemAdapter;
 use League\Flysystem\FilesystemOperator;
@@ -54,25 +58,25 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * The Flysystem PathPrefixer instance.
+     * L'instance Flysystem PathPrefixer.
      *
      * @var \League\Flysystem\PathPrefixer
      */
     protected $prefixer;
 
     /**
-     * The temporary URL builder callback.
+     * Callback du générateur d'URL temporaire.
      *
      * @var Closure|null
      */
     protected $temporaryUrlCallback;
 
     /**
-     * Create a new filesystem adapter instance.
+     * Créez une nouvelle instance d'adaptateur de système de fichiers.
      *
-     * @param FilesystemOperator $driver  The Flysystem filesystem implementation.
-     * @param FlysystemAdapter   $adapter The Flysystem adapter implementation.
-     * @param array              $config  The filesystem configuration.
+     * @param FilesystemOperator $driver L'implémentation du système de fichiers Flysystem.
+     * @param FlysystemAdapter $adapter L'implémentation de l'adaptateur Flysystem.
+     * @param array $config La configuration du système de fichiers.
      */
     public function __construct(protected FilesystemOperator $driver, protected FlysystemAdapter $adapter, protected array $config = [])
     {
@@ -94,7 +98,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Determine if a file or directory is missing.
+     * Déterminez si un fichier ou un répertoire est manquant.
      */
     public function missing(string $path): bool
     {
@@ -102,7 +106,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Determine if a file exists.
+     * Déterminez si un fichier existe.
      */
     public function fileExists(string $path): bool
     {
@@ -110,7 +114,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Determine if a file is missing.
+     * Déterminez si un fichier est manquant.
      */
     public function fileMissing(string $path): bool
     {
@@ -118,7 +122,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Determine if a directory exists.
+     * Déterminez si un répertoire existe.
      */
     public function directoryExists(string $path): bool
     {
@@ -126,7 +130,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Determine if a directory is missing.
+     * Déterminez si un répertoire est manquant.
      */
     public function directoryMissing(string $path): bool
     {
@@ -134,7 +138,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Get the full path for the file at the given "short" path.
+     * Obtenez le chemin complet du fichier dans le chemin "court" donné.
      */
     public function path(string $path): string
     {
@@ -154,14 +158,12 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Create a streamed response for a given file.
-     *
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     * Créez une réponse diffusée pour un fichier donné.
      */
-    public function response(string $path, ?string $name = null, array $headers = [], ?string $disposition = 'inline')
+    public function response(string $path, ?string $name = null, array $headers = [], ?string $disposition = 'inline'): Response
     {
-        $response = new \Symfony\Component\HttpFoundation\StreamedResponse();
-
+        $response = new Response();
+        
         if (! array_key_exists('Content-Type', $headers)) {
             $headers['Content-Type'] = $this->mimeType($path);
         }
@@ -173,38 +175,26 @@ class FilesystemAdapter implements FilesystemInterface
         if (! array_key_exists('Content-Disposition', $headers)) {
             $filename = $name ?? basename($path);
 
-            $disposition = $response->headers->makeDisposition(
-                $disposition,
-                $filename,
-                $this->fallbackName($filename)
-            );
-
-            $headers['Content-Disposition'] = $disposition;
+            $headers['Content-Disposition'] = self::makeDisposition($disposition, $filename, $this->fallbackName($filename));
         }
 
-        $response->headers->replace($headers);
+        foreach ($headers as $key => $value) {
+            $response = $response->withHeader($key, $value);
+        }
 
-        $response->setCallback(function () use ($path) {
-            $stream = $this->readStream($path);
-            fpassthru($stream);
-            fclose($stream);
-        });
-
-        return $response;
+        return $response->withBody(Utils::streamFor($this->readStream($path)));
     }
 
     /**
-     * Create a streamed download response for a given file.
-     *
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     * Créez une réponse de téléchargement en continu pour un fichier donné.
      */
-    public function download(string $path, ?string $name = null, array $headers = [])
+    public function download(string $path, ?string $name = null, array $headers = []): Response
     {
         return $this->response($path, $name, $headers, 'attachment');
     }
 
     /**
-     * Convert the string to ASCII characters that are equivalent to the given name.
+     * Convertissez la chaîne en caractères ASCII équivalents au nom donné.
      */
     protected function fallbackName(string $name): string
     {
@@ -214,7 +204,7 @@ class FilesystemAdapter implements FilesystemInterface
     /**
      * {@inheritDoc}
      *
-     * @param \Illuminate\Http\File|resource|StreamInterface|string|UploadedFile $contents
+     * @param File|resource|StreamInterface|string|UploadedFile $contents
      *
      * @return bool|string
      */
@@ -224,9 +214,8 @@ class FilesystemAdapter implements FilesystemInterface
                      ? ['visibility' => $options]
                      : (array) $options;
 
-        // If the given contents is actually a file or uploaded file instance than we will
-        // automatically store the file using a stream. This provides a convenient path
-        // for the developer to store streams without managing them manually in code.
+        // Si le contenu donné est en fait un fichier ou une instance de fichier téléchargé, nous stockerons automatiquement le fichier à l'aide d'un flux.
+        // Cela fournit un chemin pratique au développeur pour stocker les flux sans les gérer manuellement dans le code.
         if ($contents instanceof File || $contents instanceof UploadedFile) {
             return $this->putFile($path, $contents, $options);
         }
@@ -251,9 +240,9 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Store the uploaded file on the disk.
+     * Stockez le fichier téléchargé sur le disque.
      *
-     * @param \Illuminate\Http\File|string|UploadedFile $file
+     * @param File|string|UploadedFile $file
      *
      * @return false|string
      */
@@ -265,9 +254,9 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Store the uploaded file on the disk with a given name.
+     * Stockez le fichier téléchargé sur le disque avec un nom donné.
      *
-     * @param \Illuminate\Http\File|string|UploadedFile $file
+     * @param File|string|UploadedFile $file
      *
      * @return false|string
      */
@@ -275,9 +264,8 @@ class FilesystemAdapter implements FilesystemInterface
     {
         $stream = fopen(is_string($file) ? $file : $file->getRealPath(), 'rb');
 
-        // Next, we will format the path of the file and store the file using a stream since
-        // they provide better performance than alternatives. Once we write the file this
-        // stream will get closed automatically by us so the developer doesn't have to.
+        // Ensuite, nous allons formater le chemin du fichier et stocker le fichier à l'aide d'un flux car ils offrent de meilleures performances que les alternatives.
+        // Une fois que nous aurons écrit le fichier, ce flux sera fermé automatiquement par nous afin que le développeur n'ait pas à le faire.
         $result = $this->put(
             $path = trim($path . '/' . $name, '/'),
             $stream,
@@ -406,7 +394,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Get the checksum for a file.
+     * Obtenir la somme de contrôle d'un fichier.
      *
      * @return false|string
      *
@@ -424,7 +412,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Get the mime-type of a given file.
+     * Récupère le type mime d'un fichier donné.
      *
      * @return false|string
      */
@@ -476,7 +464,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Get the URL for the file at the given path.
+     * Obtenez l'URL du fichier au chemin indiqué.
      *
      * @throws RuntimeException
      */
@@ -501,11 +489,11 @@ class FilesystemAdapter implements FilesystemInterface
             return $this->getLocalUrl($path);
         }
 
-        throw new RuntimeException('This driver does not support retrieving URLs.');
+        throw new RuntimeException('Ce pilote ne prend pas en charge la récupération des URL.');
     }
 
     /**
-     * Get the URL for the file at the given path.
+     * Obtenez l'URL du fichier au chemin indiqué.
      */
     protected function getFtpUrl(string $path): string
     {
@@ -515,22 +503,20 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Get the URL for the file at the given path.
+     * Obtenez l'URL du fichier au chemin indiqué.
      */
     protected function getLocalUrl(string $path): string
     {
-        // If an explicit base URL has been set on the disk configuration then we will use
-        // it as the base URL instead of the default path. This allows the developer to
-        // have full control over the base path for this filesystem's generated URLs.
+        // Si une URL de base explicite a été définie sur la configuration du disque, nous l'utiliserons comme URL de base au lieu du chemin par défaut.
+        // Cela permet au développeur d'avoir un contrôle total sur le chemin de base des URL générées par ce système de fichiers.
         if (isset($this->config['url'])) {
             return $this->concatPathToUrl($this->config['url'], $path);
         }
 
         $path = '/storage/' . $path;
 
-        // If the path contains "storage/public", it probably means the developer is using
-        // the default disk to generate the path instead of the "public" disk like they
-        // are really supposed to use. We will remove the public from this path here.
+        // Si le chemin contient "stockage/public", cela signifie probablement que le développeur utilise le disque par défaut pour générer le chemin au lieu du disque "public" comme il est vraiment censé l'utiliser.
+        // Nous allons supprimer le public de ce chemin ici.
         if (str_contains($path, '/storage/public/')) {
             return Text::replaceFirst('/public/', '/', $path);
         }
@@ -539,7 +525,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Determine if temporary URLs can be generated.
+     * Déterminez si des URL temporaires peuvent être générées.
      */
     public function providesTemporaryUrls(): bool
     {
@@ -547,7 +533,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Get a temporary URL for the file at the given path.
+     * Obtenez une URL temporaire pour le fichier au chemin donné.
      *
      * @throws RuntimeException
      */
@@ -565,11 +551,11 @@ class FilesystemAdapter implements FilesystemInterface
             );
         }
 
-        throw new RuntimeException('This driver does not support creating temporary URLs.');
+        throw new RuntimeException('Ce pilote ne prend pas en charge la création d\'URL temporaires.');
     }
 
     /**
-     * Concatenate a path to a URL.
+     * Concaténer un chemin vers une URL.
      */
     protected function concatPathToUrl(string $url, string $path): string
     {
@@ -577,7 +563,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Replace the scheme, host and port of the given UriInterface with values from the given URL.
+     * Remplacez le schéma, l'hôte et le port de l'UriInterface donnée par les valeurs de l'URL donnée.
      */
     protected function replaceBaseUrl(UriInterface $uri, string $url): UriInterface
     {
@@ -661,7 +647,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Get the Flysystem driver.
+     * Obtenez le pilote Flysystem.
      */
     public function getDriver(): FilesystemOperator
     {
@@ -669,7 +655,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Get the Flysystem adapter.
+     * Obtenez l'adaptateur Flysystem.
      */
     public function getAdapter(): FlysystemAdapter
     {
@@ -677,7 +663,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Get the configuration values.
+     * Obtenez les valeurs de configuration.
      */
     public function getConfig(): array
     {
@@ -685,7 +671,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Parse the given visibility value.
+     * Analyser la valeur de visibilité donnée.
      *
      * @throws InvalidArgumentException
      */
@@ -698,12 +684,12 @@ class FilesystemAdapter implements FilesystemInterface
         return match ($visibility) {
             FilesystemInterface::VISIBILITY_PUBLIC  => Visibility::PUBLIC,
             FilesystemInterface::VISIBILITY_PRIVATE => Visibility::PRIVATE,
-            default                                 => throw new InvalidArgumentException("Unknown visibility: {$visibility}."),
+            default                                 => throw new InvalidArgumentException("Visibilité inconnue: {$visibility}."),
         };
     }
 
     /**
-     * Define a custom temporary URL builder callback.
+     * Définissez un rappel de générateur d'URL temporaire personnalisé.
      */
     public function buildTemporaryUrlsUsing(Closure $callback): void
     {
@@ -711,7 +697,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Determine if Flysystem exceptions should be thrown.
+     * Déterminez si les exceptions Flysystem doivent être levées.
      */
     protected function throwsExceptions(): bool
     {
@@ -719,7 +705,7 @@ class FilesystemAdapter implements FilesystemInterface
     }
 
     /**
-     * Pass dynamic methods call onto Flysystem.
+     * Passez l'appel de méthodes dynamiques à Flysystem.
      *
      * @throws BadMethodCallException
      */
@@ -730,5 +716,50 @@ class FilesystemAdapter implements FilesystemInterface
         }
 
         return $this->driver->{$method}(...$parameters);
+    }
+
+    /**
+     * Génère une valeur de champ HTTP Content-Disposition.
+     *
+     * @param string $disposition Une valeur entre "inline" ou "attachment"
+     * @param string $filename         Une chaîne unicode
+     * @param string $filenameFallback Une chaîne contenant uniquement des caractères ASCII qui est sémantiquement équivalente à $filename.
+     *                                  Si le nom de fichier est déjà ASCII, il peut être omis ou simplement copié à partir de $filename
+     *
+     * @throws InvalidArgumentException
+     *
+     * @see RFC 6266
+     */
+    public static function makeDisposition(string $disposition, string $filename, string $filenameFallback = ''): string
+    {
+        if (!\in_array($disposition, ['attachment', 'inline'])) {
+            throw new \InvalidArgumentException('La disposition doit être "attachment" ou "inline".');
+        }
+
+        if ('' === $filenameFallback) {
+            $filenameFallback = $filename;
+        }
+
+        // filenameFallback n'est pas ASCII.
+        if (!preg_match('/^[\x20-\x7e]*$/', $filenameFallback)) {
+            throw new InvalidArgumentException('Le nom de fichier de secours ne doit contenir que des caractères ASCII.');
+        }
+
+        // Les caractères de pourcentage ne sont pas sûrs en mode de repli.
+        if (str_contains($filenameFallback, '%')) {
+            throw new InvalidArgumentException('Le nom de fichier de secours ne peut pas contenir le caractère "%".');
+        }
+
+        // les séparateurs de chemin ne sont pas autorisés non plus.
+        if (str_contains($filename, '/') || str_contains($filename, '\\') || str_contains($filenameFallback, '/') || str_contains($filenameFallback, '\\')) {
+            throw new InvalidArgumentException('Le nom de fichier et le fallback ne peuvent pas contenir les caractères "/" et "\\".');
+        }
+
+        $params = ['filename' => $filenameFallback];
+        if ($filename !== $filenameFallback) {
+            $params['filename*'] = "utf-8''".rawurlencode($filename);
+        }
+
+        return $disposition . '; ' . Arr::toString($params, ';', true);
     }
 }

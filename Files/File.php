@@ -13,7 +13,6 @@ namespace BlitzPHP\Filesystem\Files;
 
 use BlitzPHP\Filesystem\Exceptions\FileException;
 use BlitzPHP\Filesystem\Exceptions\FileNotFoundException;
-use BlitzPHP\Utilities\Date;
 use ReturnTypeWillChange;
 use SplFileInfo;
 
@@ -24,6 +23,8 @@ use SplFileInfo;
  */
 class File extends SplFileInfo
 {
+    use FileHelpers;
+
     /**
      * La taille des fichiers en octets
      *
@@ -46,6 +47,8 @@ class File extends SplFileInfo
         if ($checkFile && ! is_file($path)) {
             throw FileNotFoundException::fileNotFound($path);
         }
+
+        $this->clientExtension();
 
         parent::__construct($path);
     }
@@ -93,6 +96,14 @@ class File extends SplFileInfo
     }
 
     /**
+     * Obtenez l'extension du fichier fournie par le client.
+     */
+    public function clientExtension(): string
+    {
+        return $this->getExtension();
+    }
+
+    /**
      * Récupérez le type de média du fichier.
      * NE DEVRAIT PAS utiliser les informations du tableau $_FILES,
      * mais devrait utiliser d'autres méthodes pour déterminer plus précisément le type de fichier, comme finfo,
@@ -111,18 +122,6 @@ class File extends SplFileInfo
         finfo_close($finfo);
 
         return $mimeType;
-    }
-
-    /**
-     * Génère des noms aléatoires basés sur un simple hachage et l'heure,
-     * avec l'extension de fichier correcte jointe.
-     */
-    public function getRandomName(): string
-    {
-        $extension = $this->getExtension();
-        $extension = empty($extension) ? '' : '.' . $extension;
-
-        return Date::now()->getTimestamp() . '_' . bin2hex(random_bytes(10)) . $extension;
     }
 
     /**
