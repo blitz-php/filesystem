@@ -155,6 +155,8 @@ class FilesystemAdapter implements FilesystemInterface
         } catch (UnableToReadFile $e) {
             Helpers::throwIf($this->throwsExceptions(), $e);
         }
+
+        return null;
     }
 
     /**
