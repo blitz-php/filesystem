@@ -11,16 +11,18 @@
 
 namespace BlitzPHP\Filesystem\Exceptions;
 
+use BlitzPHP\Traits\SingletonTrait;
 use BlitzPHP\Traits\Support\Translatable;
 use RuntimeException;
 
 class FileException extends RuntimeException
 {
     use Translatable;
+    use SingletonTrait;
 
     public static function unableToMove(?string $from = null, ?string $to = null, ?string $error = null)
     {
-        return new static(static::translate('Files.cannotMove', [$from, $to, $error]));
+        return new static(static::instance()->translate('Files.cannotMove', [$from, $to, $error]));
     }
 
     /**
@@ -30,7 +32,7 @@ class FileException extends RuntimeException
      */
     public static function expectedDirectory(string $caller)
     {
-        return new static(static::translate('Files.expectedDirectory', [$caller]));
+        return new static(static::instance()->translate('Files.expectedDirectory', [$caller]));
     }
 
     /**
@@ -40,6 +42,6 @@ class FileException extends RuntimeException
      */
     public static function expectedFile(string $caller)
     {
-        return new static(static::translate('Files.expectedFile', [$caller]));
+        return new static(static::instance()->translate('Files.expectedFile', [$caller]));
     }
 }
