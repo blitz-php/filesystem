@@ -149,7 +149,7 @@ class FileCollection implements Countable, IteratorAggregate
      *
      * @param string[] $files La nouvelle liste de fichiers à utiliser
      */
-    public function set(array $files): self
+    public function set(array $files): static
     {
         $this->files = [];
 
@@ -159,7 +159,7 @@ class FileCollection implements Countable, IteratorAggregate
     /**
      * Ajoute un tableau/fichier unique ou un répertoire à la liste.
      */
-    public function add(array|string $paths, bool $recursive = true): self
+    public function add(array|string $paths, bool $recursive = true): static
     {
         $paths = (array) $paths;
 
@@ -192,7 +192,7 @@ class FileCollection implements Countable, IteratorAggregate
      *
      * @param string[] $files
      */
-    public function addFiles(array $files): self
+    public function addFiles(array $files): static
     {
         foreach ($files as $file) {
             $this->addFile($file);
@@ -204,7 +204,7 @@ class FileCollection implements Countable, IteratorAggregate
     /**
      * Vérifie et ajoute un seul fichier à la liste des fichiers.
      */
-    public function addFile(string $file): self
+    public function addFile(string $file): static
     {
         $this->files[] = self::resolveFile($file);
 
@@ -216,7 +216,7 @@ class FileCollection implements Countable, IteratorAggregate
      *
      * @param string[] $files
      */
-    public function removeFiles(array $files): self
+    public function removeFiles(array $files): static
     {
         $this->files = array_diff($this->files, $files);
 
@@ -226,7 +226,7 @@ class FileCollection implements Countable, IteratorAggregate
     /**
      * Supprime un seul fichier de la liste.
      */
-    public function removeFile(string $file): self
+    public function removeFile(string $file): static
     {
         return $this->removeFiles([$file]);
     }
@@ -240,7 +240,7 @@ class FileCollection implements Countable, IteratorAggregate
      *
      * @param string[] $directories
      */
-    public function addDirectories(array $directories, bool $recursive = false): self
+    public function addDirectories(array $directories, bool $recursive = false): static
     {
         foreach ($directories as $directory) {
             $this->addDirectory($directory, $recursive);
@@ -252,7 +252,7 @@ class FileCollection implements Countable, IteratorAggregate
     /**
      * Vérifie et ajoute tous les fichiers d'un répertoire.
      */
-    public function addDirectory(string $directory, bool $recursive = false): self
+    public function addDirectory(string $directory, bool $recursive = false): static
     {
         $directory = self::resolveDirectory($directory);
 
@@ -278,7 +278,7 @@ class FileCollection implements Countable, IteratorAggregate
      * @param string      $pattern Regex ou chaîne pseudo-regex
      * @param string|null $scope   Le répertoire pour limiter la portée
      */
-    public function removePattern(string $pattern, ?string $scope = null): self
+    public function removePattern(string $pattern, ?string $scope = null): static
     {
         if ($pattern === '') {
             return $this;
@@ -297,7 +297,7 @@ class FileCollection implements Countable, IteratorAggregate
      * @param string      $pattern Regex ou chaîne pseudo-regex
      * @param string|null $scope   Un répertoire pour limiter la portée
      */
-    public function retainPattern(string $pattern, ?string $scope = null): self
+    public function retainPattern(string $pattern, ?string $scope = null): static
     {
         if ($pattern === '') {
             return $this;
