@@ -97,6 +97,14 @@ class UploadedFile extends GuzzleUploadedFile
         return file_get_contents($this->getPathname());
     }
 
+	/**
+	 * Renvoie true s'il n'y a pas d'erreur de téléchargement
+	 */
+	public function isValid(): bool
+	{
+		return $this->getError() === UPLOAD_ERR_OK;
+	}
+
     /**
      * Obtenez l'extension du fichier fournie par le client.
      */
