@@ -121,8 +121,13 @@ class UploadedFile extends GuzzleUploadedFile
         if (null !== $type = $this->getClientMediaType()) {
             return $type;
         }
-        
+
         return Mimes::guessTypeFromExtension($this->clientExtension()) ?? '';
+    }
+
+    public function getClientFilename(): string
+    {
+        return parent::getClientFilename() ?: pathinfo($this->getPathname(), PATHINFO_BASENAME);
     }
 
     public function getPath(): string
