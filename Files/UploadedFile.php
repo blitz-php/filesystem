@@ -113,6 +113,23 @@ class UploadedFile extends GuzzleUploadedFile
         return pathinfo($this->getClientFilename(), PATHINFO_EXTENSION);
     }
 
+    /**
+     * Récupérez le type de média du fichier.
+     */
+    public function getMimeType(): string
+    {
+        if (null !== $type = $this->getClientMediaType()) {
+            return $type;
+        }
+        
+        return Mimes::guessTypeFromExtension($this->clientExtension()) ?? '';
+    }
+
+    public function getPath(): string
+    {
+        return $this->getPathname();
+    }
+
     public function getPathname(): string
     {
         return $this->getStream()->getMetadata('uri');

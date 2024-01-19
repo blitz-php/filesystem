@@ -40,6 +40,18 @@ trait FileHelpers
     }
 
     /**
+     * Retourne l'extension basée sur le type de mime.
+     *
+     * Si le type de mime est inconnu, il renvoie null.
+     *
+     * Cette méthode utilise le type mime tel que deviné par getMimeType() pour deviner l'extension du fichier.
+     */
+    public function guessExtension(): ?string
+    {
+        return Mimes::guessExtensionFromType($this->getMimeType());
+    }
+
+    /**
      * Génère des noms aléatoires basés sur un simple hachage et l'heure,
      * avec l'extension de fichier correcte jointe.
      */
