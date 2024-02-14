@@ -264,7 +264,7 @@ class FilesystemAdapter implements FilesystemInterface
      */
     public function putFileAs(string $path, $file, string $name, mixed $options = [])
     {
-        $stream = fopen(is_string($file) ? $file : $file->getRealPath(), 'rb');
+        $stream = fopen(is_string($file) ? $file : $file->realPath(), 'rb');
 
         // Ensuite, nous allons formater le chemin du fichier et stocker le fichier à l'aide d'un flux car ils offrent de meilleures performances que les alternatives.
         // Une fois que nous aurons écrit le fichier, ce flux sera fermé automatiquement par nous afin que le développeur n'ait pas à le faire.

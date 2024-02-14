@@ -73,7 +73,7 @@ class UploadedFile extends GuzzleUploadedFile
 
         $disk = Arr::pull($options, 'disk');
 
-        $this->filesystemManager()->disk($disk)->putFileAs(
+        return $this->filesystemManager()->disk($disk)->putFileAs(
             $path,
             $this,
             $name,
