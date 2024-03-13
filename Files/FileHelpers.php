@@ -33,15 +33,15 @@ trait FileHelpers
 
     /**
      * Obtenez le chemin d'accès reel au fichier.
-     * 
-     * @return string|false
+     *
+     * @return false|string
      */
     public function realPath()
     {
         if (method_exists($this, 'getRealPath')) {
             return $this->getRealPath();
         }
-        
+
         return realpath($this->path());
     }
 
