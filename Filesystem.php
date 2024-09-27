@@ -123,7 +123,7 @@ class Filesystem
             })();
         }
 
-        throw new FileNotFoundException("File does not exist at path {$path}.");
+        throw new FileNotFoundException("Le fichier n'existe pas dans le chemin {$path}.");
     }
 
     /**

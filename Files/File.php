@@ -48,8 +48,6 @@ class File extends SplFileInfo
             throw FileNotFoundException::fileNotFound($path);
         }
 
-        $this->clientExtension();
-
         parent::__construct($path);
     }
 
@@ -74,10 +72,14 @@ class File extends SplFileInfo
      */
     public function getSizeByUnit(string $unit = 'b')
     {
+		if (false === $size = $this->getSize()) {
+			return false;
+		}
+
         return match (strtolower($unit)) {
-            'kb'    => number_format($this->getSize() / 1024, 3),
-            'mb'    => number_format(($this->getSize() / 1024) / 1024, 3),
-            default => $this->getSize(),
+            'kb'    => number_format($size / 1024, 3),
+            'mb'    => number_format(($size / 1024) / 1024, 3),
+            default => $size,
         };
     }
 
