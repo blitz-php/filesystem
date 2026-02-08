@@ -1,9 +1,9 @@
 <?php
 
 /**
- * This file is part of Blitz PHP framework - Filesystem.
+ * This file is part of Blitz PHP framework.
  *
- * (c) 2023 Dimitri Sitchet Tomkeu <devcode.dst@gmail.com>
+ * (c) 2022 Dimitri Sitchet Tomkeu <devcode.dst@gmail.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE file that was distributed with this source code.
@@ -42,7 +42,7 @@ class FilesystemManager
     /**
      * The array of resolved filesystem drivers.
      *
-     * @var FilesystemInterface[]
+     * @var list<FilesystemInterface>
      */
     protected array $disks = [];
 
@@ -89,7 +89,7 @@ class FilesystemManager
     /**
      * Build an on-demand disk.
      */
-    public function build(string|array $config): FilesystemInterface
+    public function build(array|string $config): FilesystemInterface
     {
         return $this->resolve('ondemand', is_array($config) ? $config : [
             'driver' => 'local',
@@ -252,7 +252,7 @@ class FilesystemManager
 
         return $this->build(Helpers::tap(
             $this->getConfig($config['disk']),
-            fn (&$parent) => $parent['prefix'] = $config['prefix']
+            static fn (&$parent) => $parent['prefix'] = $config['prefix']
         ));
     }
 

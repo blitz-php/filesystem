@@ -1,9 +1,9 @@
 <?php
 
 /**
- * This file is part of Blitz PHP framework - Filesystem.
+ * This file is part of Blitz PHP framework.
  *
- * (c) 2023 Dimitri Sitchet Tomkeu <devcode.dst@gmail.com>
+ * (c) 2022 Dimitri Sitchet Tomkeu <devcode.dst@gmail.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE file that was distributed with this source code.
@@ -159,7 +159,7 @@ class UploadedFile extends GuzzleUploadedFile
     /**
      * Analysez et formatez les options données.
      */
-    protected function parseOptions(string|array $options): array
+    protected function parseOptions(array|string $options): array
     {
         if (is_string($options)) {
             $options = ['disk' => $options];

@@ -1,9 +1,9 @@
 <?php
 
 /**
- * This file is part of Blitz PHP framework - Filesystem.
+ * This file is part of Blitz PHP framework.
  *
- * (c) 2023 Dimitri Sitchet Tomkeu <devcode.dst@gmail.com>
+ * (c) 2022 Dimitri Sitchet Tomkeu <devcode.dst@gmail.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE file that was distributed with this source code.
@@ -137,7 +137,7 @@ class Filesystem
             throw new FileNotFoundException("Le fichier n'existe pas dans le chemin {$path}.");
         }
 
-        return LazyCollection::make(function () use ($path) {
+        return LazyCollection::make(static function () use ($path) {
             $file = new SplFileObject($path);
 
             $file->setFlags(SplFileObject::DROP_NEW_LINE);
@@ -237,7 +237,7 @@ class Filesystem
     /**
      * Supprimer le fichier à un chemin donné.
      */
-    public function delete(string|array $paths): bool
+    public function delete(array|string $paths): bool
     {
         $paths = is_array($paths) ? $paths : func_get_args();
 
@@ -427,7 +427,7 @@ class Filesystem
     /**
      * Récupère un tableau de tous les fichiers d'un répertoire.
      *
-     * @return \Symfony\Component\Finder\SplFileInfo[]
+     * @return list<\Symfony\Component\Finder\SplFileInfo>
      */
     public function files(string $directory, bool $hidden = false, string $sortBy = 'name'): array
     {
@@ -464,7 +464,7 @@ class Filesystem
     /**
      * Récupère tous les fichiers du répertoire donné (récursif).
      *
-     * @return \Symfony\Component\Finder\SplFileInfo[]
+     * @return list<\Symfony\Component\Finder\SplFileInfo>
      */
     public function allFiles(string $directory, bool $hidden = false, string $sortBy = 'name'): array
     {

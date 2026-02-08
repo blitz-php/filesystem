@@ -1,9 +1,9 @@
 <?php
 
 /**
- * This file is part of Blitz PHP framework - Filesystem.
+ * This file is part of Blitz PHP framework.
  *
- * (c) 2023 Dimitri Sitchet Tomkeu <devcode.dst@gmail.com>
+ * (c) 2022 Dimitri Sitchet Tomkeu <devcode.dst@gmail.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE file that was distributed with this source code.
@@ -72,9 +72,9 @@ class File extends SplFileInfo
      */
     public function getSizeByUnit(string $unit = 'b')
     {
-		if (false === $size = $this->getSize()) {
-			return false;
-		}
+        if (false === $size = $this->getSize()) {
+            return false;
+        }
 
         return match (strtolower($unit)) {
             'kb'    => number_format($size / 1024, 3),
@@ -167,7 +167,7 @@ class File extends SplFileInfo
             $info      = pathinfo($destination);
             $extension = isset($info['extension']) ? '.' . $info['extension'] : '';
 
-            if (strpos($info['filename'], $delimiter) !== false) {
+            if (str_contains($info['filename'], $delimiter)) {
                 $parts = explode($delimiter, $info['filename']);
 
                 if (is_numeric(end($parts))) {

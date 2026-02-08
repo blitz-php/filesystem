@@ -1,9 +1,9 @@
 <?php
 
 /**
- * This file is part of Blitz PHP framework - Filesystem.
+ * This file is part of Blitz PHP framework.
  *
- * (c) 2023 Dimitri Sitchet Tomkeu <devcode.dst@gmail.com>
+ * (c) 2022 Dimitri Sitchet Tomkeu <devcode.dst@gmail.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE file that was distributed with this source code.
@@ -29,7 +29,7 @@ class FileCollection implements Countable, IteratorAggregate
     /**
      * La liste actuelle des chemins de fichiers.
      *
-     * @var string[]
+     * @var list<string>
      */
     protected array $files = [];
 
@@ -72,24 +72,24 @@ class FileCollection implements Countable, IteratorAggregate
     /**
      * Supprime les fichiers qui ne font pas partie du répertoire donné (récursif).
      *
-     * @param string[] $files
+     * @param list<string> $files
      *
-     * @return string[]
+     * @return list<string>
      */
     final protected static function filterFiles(array $files, string $directory): array
     {
         $directory = self::resolveDirectory($directory);
 
-        return array_filter($files, static fn (string $value): bool => strpos($value, $directory) === 0);
+        return array_filter($files, static fn (string $value): bool => str_starts_with($value, $directory));
     }
 
     /**
      * Renvoie tous les fichiers dont le `basename` correspond au modèle donné.
      *
-     * @param string[] $files
-     * @param string   $pattern Chaîne régulière ou pseudo-régulière
+     * @param list<string> $files
+     * @param string       $pattern Chaîne régulière ou pseudo-régulière
      *
-     * @return string[]
+     * @return list<string>
      */
     final protected static function matchFiles(array $files, string $pattern): array
     {
@@ -113,7 +113,7 @@ class FileCollection implements Countable, IteratorAggregate
     /**
      * Charge l'assistant du système de fichiers et ajoute tous les fichiers initiaux.
      *
-     * @param string[] $files
+     * @param list<string> $files
      */
     public function __construct(array $files = [])
     {
@@ -133,7 +133,7 @@ class FileCollection implements Countable, IteratorAggregate
     /**
      * Optimise et renvoie la liste de fichiers actuelle.
      *
-     * @return string[]
+     * @return list<string>
      */
     public function get(): array
     {
@@ -147,7 +147,7 @@ class FileCollection implements Countable, IteratorAggregate
      * Définit directement la liste des fichiers, les fichiers sont toujours soumis à vérification.
      * Cela fonctionne comme une méthode de "réinitialisation" avec [].
      *
-     * @param string[] $files La nouvelle liste de fichiers à utiliser
+     * @param list<string> $files La nouvelle liste de fichiers à utiliser
      */
     public function set(array $files): static
     {
@@ -190,7 +190,7 @@ class FileCollection implements Countable, IteratorAggregate
     /**
      * Vérifie et ajoute des fichiers à la liste.
      *
-     * @param string[] $files
+     * @param list<string> $files
      */
     public function addFiles(array $files): static
     {
@@ -214,7 +214,7 @@ class FileCollection implements Countable, IteratorAggregate
     /**
      * Supprime les fichiers de la liste.
      *
-     * @param string[] $files
+     * @param list<string> $files
      */
     public function removeFiles(array $files): static
     {
@@ -238,7 +238,7 @@ class FileCollection implements Countable, IteratorAggregate
     /**
      * Vérifie et ajoute les fichiers de chaque répertoire à la liste.
      *
-     * @param string[] $directories
+     * @param list<string> $directories
      */
     public function addDirectories(array $directories, bool $recursive = false): static
     {

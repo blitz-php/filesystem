@@ -16,11 +16,6 @@
         "league/flysystem": "^3.15",
         "symfony/finder": "^6.0"
     },
-    "require-dev": {
-        "blitz-php/coding-standard": "^1.1",
-        "phpstan/phpstan": "^1.4.7",
-        "scrutinizer/ocular": "^1.8.1"
-    },
     "autoload": {
         "psr-4": {
             "BlitzPHP\\Filesystem\\": ""
@@ -39,11 +34,6 @@
     "support": {
         "issues": "https://github.com/blitz-php/framework/issues",
         "source": "https://github.com/blitz-php/framework"
-    },
-    "scripts": {
-        "analyze": "phpstan analyse",
-        "cs": "php-cs-fixer fix --ansi --verbose --dry-run --diff",
-        "cs-fix": "php-cs-fixer fix --ansi --verbose --diff"
     },
     "suggest": {
         "ext-ftp": "Requis pour utiliser le pilote FTP Flysystem.",

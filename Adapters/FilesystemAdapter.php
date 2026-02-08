@@ -1,9 +1,9 @@
 <?php
 
 /**
- * This file is part of Blitz PHP framework - Filesystem.
+ * This file is part of Blitz PHP framework.
  *
- * (c) 2023 Dimitri Sitchet Tomkeu <devcode.dst@gmail.com>
+ * (c) 2022 Dimitri Sitchet Tomkeu <devcode.dst@gmail.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE file that was distributed with this source code.
@@ -60,7 +60,7 @@ class FilesystemAdapter implements FilesystemInterface
     /**
      * L'instance Flysystem PathPrefixer.
      *
-     * @var \League\Flysystem\PathPrefixer
+     * @var PathPrefixer
      */
     protected $prefixer;
 
@@ -232,7 +232,7 @@ class FilesystemAdapter implements FilesystemInterface
             is_resource($contents)
                 ? $this->driver->writeStream($path, $contents, $options)
                 : $this->driver->write($path, $contents, $options);
-        } catch (UnableToWriteFile|UnableToSetVisibility $e) {
+        } catch (UnableToSetVisibility|UnableToWriteFile $e) {
             Helpers::throwIf($this->throwsExceptions(), $e);
 
             return false;
@@ -336,7 +336,7 @@ class FilesystemAdapter implements FilesystemInterface
     /**
      * {@inheritDoc}
      */
-    public function delete(string|array $paths): bool
+    public function delete(array|string $paths): bool
     {
         $paths = is_array($paths) ? $paths : func_get_args();
 
@@ -456,7 +456,7 @@ class FilesystemAdapter implements FilesystemInterface
     {
         try {
             $this->driver->writeStream($path, $resource, $options);
-        } catch (UnableToWriteFile|UnableToSetVisibility $e) {
+        } catch (UnableToSetVisibility|UnableToWriteFile $e) {
             Helpers::throwIf($this->throwsExceptions(), $e);
 
             return false;
@@ -583,9 +583,9 @@ class FilesystemAdapter implements FilesystemInterface
     public function files(?string $directory = null, bool $recursive = false): array
     {
         return $this->driver->listContents($directory ?? '', $recursive)
-            ->filter(fn (StorageAttributes $attributes) => $attributes->isFile())
+            ->filter(static fn (StorageAttributes $attributes) => $attributes->isFile())
             ->sortByPath()
-            ->map(fn (StorageAttributes $attributes) => $attributes->path())
+            ->map(static fn (StorageAttributes $attributes) => $attributes->path())
             ->toArray();
     }
 
@@ -603,8 +603,8 @@ class FilesystemAdapter implements FilesystemInterface
     public function directories(?string $directory = null, bool $recursive = false): array
     {
         return $this->driver->listContents($directory ?? '', $recursive)
-            ->filter(fn (StorageAttributes $attributes) => $attributes->isDir())
-            ->map(fn (StorageAttributes $attributes) => $attributes->path())
+            ->filter(static fn (StorageAttributes $attributes) => $attributes->isDir())
+            ->map(static fn (StorageAttributes $attributes) => $attributes->path())
             ->toArray();
     }
 
