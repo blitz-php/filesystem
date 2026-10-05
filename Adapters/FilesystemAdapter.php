@@ -471,7 +471,11 @@ class FilesystemAdapter implements FilesystemInterface
      * @throws RuntimeException
      */
     public function url(string $path): string
-    {
+    {        
+        if (isset($this->config['url']) && str_starts_with($path, $this->config['url'])) {
+            $path = Text::replaceFirst($this->config['url'], '', $path);
+        }
+
         if (isset($this->config['prefix'])) {
             $path = $this->concatPathToUrl($this->config['prefix'], $path);
         }
